@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DefaultInitialLoading extends StatelessWidget {
   const DefaultInitialLoading({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

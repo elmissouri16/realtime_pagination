@@ -6,19 +6,19 @@ import '../realtime_pagination.dart';
 class PaginatedList extends StatelessWidget {
   final List<DocumentSnapshot> docs;
   final ItemBuilderDelegate itemBuilder;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
   final bool isLoadingMore;
   final Widget bottomLoader;
-  final PaginatedBuilderDelegate paginatedBuilder;
+  final PaginatedBuilderDelegate? paginatedBuilder;
 
   const PaginatedList({
-    Key key,
-    @required this.itemBuilder,
-    @required this.docs,
-    @required this.isLoadingMore,
-    @required this.bottomLoader,
-    @required this.scrollController,
-    @required this.paginatedBuilder,
+    Key? key,
+    required this.itemBuilder,
+    required this.docs,
+    required this.isLoadingMore,
+    required this.bottomLoader,
+    required this.scrollController,
+    required this.paginatedBuilder,
   }) : super(key: key);
 
   @override
@@ -27,7 +27,7 @@ class PaginatedList extends StatelessWidget {
     final itemCount = docs.length + bias;
 
     if (paginatedBuilder != null) {
-      return paginatedBuilder(itemCount, scrollController, _buildItem);
+      return paginatedBuilder!(itemCount, scrollController, _buildItem);
     }
 
     return ListView.builder(

@@ -15,7 +15,7 @@ typedef ItemBuilderDelegate = Widget Function(
 
 typedef PaginatedBuilderDelegate = Widget Function(
   int itemCount,
-  ScrollController controller,
+  ScrollController? controller,
   Widget Function(BuildContext context, int index) itemBuilder,
 );
 
@@ -30,16 +30,16 @@ class RealtimePagination extends StatefulWidget {
   final bool useRefreshIndicator;
 
   /// Function to call when refreshed, if useRefreshIndicator is true.
-  final Function onRefresh;
+  final Function? onRefresh;
 
   /// Widget to show when first fetching the query.
-  final Widget initialLoading;
+  final Widget? initialLoading;
 
   /// Widget to show when the query return no documents
-  final Widget emptyDisplay;
+  final Widget? emptyDisplay;
 
   /// Widget to show at the under the last document, when the package is loading more documents.
-  final Widget bottomLoader;
+  final Widget? bottomLoader;
 
   /// The scroll threshold before start to load new documents. (0...1)
   final double scrollThreshold;
@@ -49,17 +49,17 @@ class RealtimePagination extends StatefulWidget {
 
   /// Return a ListView.builder or ListView.separated, assigning the passed properties.
   /// The rest is fully customizable.
-  final PaginatedBuilderDelegate customPaginatedBuilder;
+  final PaginatedBuilderDelegate? customPaginatedBuilder;
 
   /// You can pass your own instance of scrollController.
   /// No need to dispose, already dispose internally.
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   const RealtimePagination({
-    Key key,
-    @required this.query,
-    @required this.itemsPerPage,
-    @required this.itemBuilder,
+    Key? key,
+    required this.query,
+    required this.itemsPerPage,
+    required this.itemBuilder,
     this.customPaginatedBuilder,
     this.scrollThreshold = 0.85,
     this.initialLoading,
@@ -75,28 +75,28 @@ class RealtimePagination extends StatefulWidget {
 }
 
 class _RealtimePaginationState extends State<RealtimePagination> {
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
 
-  RealtimePaginationCubit _realtimePaginationCubit;
+  RealtimePaginationCubit? _realtimePaginationCubit;
 
   @override
   void initState() {
     super.initState();
     _scrollController = widget.scrollController ?? ScrollController();
-    _scrollController.addListener(_scrollListener);
+    _scrollController!.addListener(_scrollListener);
     _start();
   }
 
   void _scrollListener() {
-    final maxScroll = _scrollController.position.maxScrollExtent;
+    final maxScroll = _scrollController!.position.maxScrollExtent;
     final calculatedThreshold = widget.scrollThreshold * maxScroll;
-    if (_scrollController.position.pixels >= calculatedThreshold) {
+    if (_scrollController!.position.pixels >= calculatedThreshold) {
       _triggerMoreData();
     }
   }
 
   void _triggerMoreData() {
-    _realtimePaginationCubit.loadMoreData();
+    _realtimePaginationCubit!.loadMoreData();
   }
 
   @override
@@ -131,7 +131,7 @@ class _RealtimePaginationState extends State<RealtimePagination> {
 
   Future<void> _start() async {
     if (_realtimePaginationCubit != null) {
-      await _realtimePaginationCubit.close();
+      await _realtimePaginationCubit!.close();
     }
     _realtimePaginationCubit = RealtimePaginationCubit(
       limit: widget.itemsPerPage,
@@ -141,30 +141,30 @@ class _RealtimePaginationState extends State<RealtimePagination> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
-    _realtimePaginationCubit.close();
+    _scrollController!.dispose();
+    _realtimePaginationCubit!.close();
     super.dispose();
   }
 }
 
 class _DocsStream extends StatelessWidget {
-  final Widget initialLoading;
-  final Widget emptyDisplay;
-  final Widget bottomLoader;
+  final Widget? initialLoading;
+  final Widget? emptyDisplay;
+  final Widget? bottomLoader;
   final ItemBuilderDelegate itemBuilder;
-  final RealtimePaginationCubit _realtimePaginationCubit;
-  final ScrollController _scrollController;
-  final PaginatedBuilderDelegate paginatedBuilderDelegate;
+  final RealtimePaginationCubit? _realtimePaginationCubit;
+  final ScrollController? _scrollController;
+  final PaginatedBuilderDelegate? paginatedBuilderDelegate;
 
   const _DocsStream({
-    Key key,
-    @required RealtimePaginationCubit realtimePaginationCubit,
-    @required ScrollController scrollController,
-    @required this.initialLoading,
-    @required this.emptyDisplay,
-    @required this.bottomLoader,
-    @required this.itemBuilder,
-    @required this.paginatedBuilderDelegate,
+    Key? key,
+    required RealtimePaginationCubit? realtimePaginationCubit,
+    required ScrollController? scrollController,
+    required this.initialLoading,
+    required this.emptyDisplay,
+    required this.bottomLoader,
+    required this.itemBuilder,
+    required this.paginatedBuilderDelegate,
   })  : _realtimePaginationCubit = realtimePaginationCubit,
         _scrollController = scrollController,
         super(key: key);
@@ -172,10 +172,10 @@ class _DocsStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<RealtimePaginationState>(
-      stream: _realtimePaginationCubit.stream,
+      stream: _realtimePaginationCubit!.stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.waiting) {
-          final state = snapshot.data;
+          final state = snapshot.data!;
           if (state.docs.isEmpty) {
             return emptyDisplay ?? DefaultEmptyDisplay();
           }

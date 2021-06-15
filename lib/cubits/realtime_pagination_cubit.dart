@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import './realtime_pagination_state.dart';
 
 export './realtime_pagination_state.dart';
@@ -13,8 +12,8 @@ class RealtimePaginationCubit extends Cubit<RealtimePaginationState> {
   final bool listenToCreations;
 
   RealtimePaginationCubit({
-    @required this.limit,
-    @required this.query,
+    required this.limit,
+    required this.query,
     this.listenToCreations = true,
   }) : super(RealtimePaginationState.initial()) {
     loadMoreData();
@@ -25,7 +24,7 @@ class RealtimePaginationCubit extends Cubit<RealtimePaginationState> {
 
   final _pages = <Page>[];
   final _streamSubs = <StreamSubscription<QuerySnapshot>>[];
-  DocumentSnapshot _lastDocument;
+  DocumentSnapshot? _lastDocument;
   bool _hasReachedEnd = false;
 
   void loadMoreData() {
@@ -60,7 +59,7 @@ class RealtimePaginationCubit extends Cubit<RealtimePaginationState> {
 
   Query _getQuery() {
     if (_lastDocument != null) {
-      return query.startAfterDocument(_lastDocument).limit(limit);
+      return query.startAfterDocument(_lastDocument!).limit(limit);
     }
     return query.limit(limit);
   }
@@ -107,16 +106,4 @@ class Page {
   final List<DocumentSnapshot> docs;
 
   const Page(this.docs);
-
-  // @override
-  // String toString() {
-  //   var string = "[\n";
-  //   docs.forEach((doc) {
-  //     final data = doc.data();
-  //     string += data["image"];
-  //     string += ", \n";
-  //   });
-  //   string += "]";
-  //   return string;
-  // }
 }
